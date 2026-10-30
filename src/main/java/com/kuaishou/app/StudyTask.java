@@ -17,9 +17,12 @@ public class StudyTask {
 
     public StudyTask(long id, String title, long createTime) {
         this.id = id;
-        this.title = title;
         this.taskStatus = TaskStatus.TODO;
         this.createTime = createTime;
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("学习任务标题不能为空");
+        }
+        this.title = title.strip();
     }
 
     public long getId() {
@@ -31,7 +34,10 @@ public class StudyTask {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("学习任务标题不能为空");
+        }
+        this.title = title.strip();
     }
 
     public TaskStatus getTaskStatus() {

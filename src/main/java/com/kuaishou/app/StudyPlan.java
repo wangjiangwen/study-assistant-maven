@@ -17,7 +17,10 @@ public class StudyPlan {
 
     public StudyPlan(long id, String title, long createTime) {
         this.id = id;
-        this.title = title;
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("学习计划标题不能为空");
+        }
+        this.title = title.strip();
         this.createTime = createTime;
     }
 
@@ -34,7 +37,10 @@ public class StudyPlan {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("学习计划标题不能为空");
+        }
+        this.title = title.strip();
     }
 
     public void setCreateTime(long createTime) {
