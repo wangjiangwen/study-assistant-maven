@@ -16,8 +16,11 @@ public class App {
 // -------Lesson 3  任务管理与枚举，StudyTask
         service.addTask(plan.getId(), "学习枚举");
         StudyPlan serverPlan = service.createPlan("Java 服务端");
+        StudyTask serverIocTask = service.addTask(serverPlan.getId(), "容器Ioc");
+        service.completeTask(serverPlan.getId(), serverIocTask.getId());
         StudyTask serverTask = service.addTask(serverPlan.getId(), "学习Spring");
         service.completeTask(serverPlan.getId(), serverTask.getId());
+        StudyTask serverHttpTask = service.addTask(serverPlan.getId(), "Http");
 //        long maxIdToCheck = 3;
 //        for (int i = 1; i <= maxIdToCheck; i++) {
 //            StudyPlan studyPlan = service.getPlan(i);
@@ -41,5 +44,10 @@ public class App {
         } catch (IllegalArgumentException e) {
             System.out.println("创建失败：" + e.getMessage());
         }
+
+// -------Lesson 5 完成率计算
+        double rate = service.calculateCompletionRate(serverPlan.getId());
+        System.out.printf("%s学习计划完成率：%.2f%%%n",
+                serverPlan.getTitle(), rate);
     }
 }

@@ -21,6 +21,7 @@ public class StudyPlanService {
         this.nextId = id + 1;
         return studyPlan;
     }
+
     public StudyPlan getPlan(long id) {
         return this.plans.get(id);
     }
@@ -32,7 +33,7 @@ public class StudyPlanService {
     public StudyTask addTask(long planId, String title) {
         StudyPlan plan = getPlan(planId);
         if (plan == null) {
-            throw  new IllegalArgumentException("学习计划不存在");
+            throw new IllegalArgumentException("学习计划不存在");
         }
 
         return plan.createTask(taskId++, title);
@@ -41,7 +42,7 @@ public class StudyPlanService {
     public List<StudyTask> getTasks(long planId) {
         StudyPlan plan = getPlan(planId);
         if (plan == null) {
-            throw  new IllegalArgumentException("学习计划不存在");
+            throw new IllegalArgumentException("学习计划不存在");
         }
         return plan.getTasks();
     }
@@ -52,5 +53,13 @@ public class StudyPlanService {
             throw new IllegalArgumentException("学习计划不存在");
         }
         plan.completeTask(taskId);
+    }
+
+    public double calculateCompletionRate(long planId) {
+        StudyPlan plan = getPlan(planId);
+        if (plan == null) {
+            throw new IllegalArgumentException("学习计划不存在");
+        }
+        return plan.calculateCompletionRate();
     }
 }

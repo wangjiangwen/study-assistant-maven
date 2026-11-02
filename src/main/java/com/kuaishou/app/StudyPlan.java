@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author wangjiangjiao <wangjiangjiao@kuaishou.com>
  * Created on 2026-10-27
@@ -12,7 +13,7 @@ import java.util.List;
 public class StudyPlan {
     private final long id;
     private String title;
-    private  long createTime = 0;
+    private long createTime = 0;
     private final Map<Long, StudyTask> tasks = new HashMap<>();
 
     public StudyPlan(long id, String title, long createTime) {
@@ -73,5 +74,21 @@ public class StudyPlan {
         System.out.println("id:" + this.id);
         System.out.println("title:" + this.title);
         System.out.println("createTime:" + this.createTime);
+    }
+    
+    public double calculateCompletionRate() {
+        List<StudyTask> tasks = getTasks();
+        AtomicInteger completionTaskCount = new AtomicInteger();
+        tasks.forEach(task -> {
+            if (task.getTaskStatus() == TaskStatus.DONE) {
+                completionTaskCount.getAndIncrement();
+            }
+        });
+        double completionRate = 0;
+        int total = tasks.size();
+        if (total > 0) {
+            completionRate = (double)completionTaskCount.get() / total * 100;
+        }
+        return completionRate;
     }
 }
