@@ -1,51 +1,68 @@
 package com.kuaishou.app;
-import com.kuaishou.app.StudyPlan;
-import java.util.List;
 /**
- * Hello world!
+ * 第一阶段综合演示。
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-// -------Lesson 1 类和对象，创建StudyPlan
-//        StudyPlan studyPlan = new StudyPlan("1", "wang", System.currentTimeMillis());
-//        studyPlan.printStudyPlan();
-// -------Lesson 2 集合与泛型， 创建StudyPlanService
+        System.out.println("服务端学习");
+
+        demonstrateLearningProgress();
+        demonstrateInvalidInput();
+    }
+
+    public static void demonstrateLearningProgress() {
         StudyPlanService service = new StudyPlanService();
-        StudyPlan plan = service.createPlan("Java 入门");
-// -------Lesson 3  任务管理与枚举，StudyTask
-        service.addTask(plan.getId(), "学习枚举");
-        StudyPlan serverPlan = service.createPlan("Java 服务端");
-        StudyTask serverIocTask = service.addTask(serverPlan.getId(), "容器Ioc");
-        service.completeTask(serverPlan.getId(), serverIocTask.getId());
-        StudyTask serverTask = service.addTask(serverPlan.getId(), "学习Spring");
-        service.completeTask(serverPlan.getId(), serverTask.getId());
-        StudyTask serverHttpTask = service.addTask(serverPlan.getId(), "Http");
-//        long maxIdToCheck = 3;
-//        for (int i = 1; i <= maxIdToCheck; i++) {
-//            StudyPlan studyPlan = service.getPlan(i);
-//            if (studyPlan == null) {
-//                System.out.println("学习计划"+ i+"不存在");
-//            } else {
-//                studyPlan.printStudyPlan();
-//            }
-//        }
+        // 创建“Java 服务端入门”计划
+        StudyPlan serverPlan = service.createPlan("Java 服务端入门");
+        // 添加“学习集合”“学习异常”“编写测试”三个任务
+        StudyTask serverCollectionTask = service.addTask(serverPlan.getId(), "学习集合");
+        StudyTask serverExceptionTask = service.addTask(serverPlan.getId(), "学习异常");
+        StudyTask serverTestTask = service.addTask(serverPlan.getId(), "编写测试");
 
-        List<StudyPlan> studyLists = service.listPlans();
-        studyLists.forEach(studyPlan -> {
-            studyPlan.printStudyPlan();
+        // 创建第二份计划，确认它的任务状态和完成率不受第一份计划影响
+        StudyPlan androidPlan = service.createPlan("Android 入门");
+        // 添加“Java基础”一个任务
+        service.addTask(androidPlan.getId(), "Java 基础");
 
-            List<StudyTask> tasks = studyPlan.getTasks();
-            tasks.forEach(StudyTask::printTask);
-        });
-// -------Lesson 4  输入校验与异常处理 IllegalArgumentException
+        // 输出初始完成率
+        printServiceCompleteRate(service, serverPlan);
+
+        // 完成“学习集合”
+        service.completeTask(serverPlan.getId(), serverCollectionTask.getId());
+
+        // 输出完成率
+        printServiceCompleteRate(service, serverPlan);
+
+        // 重复完成“学习集合”
+        service.completeTask(serverPlan.getId(), serverCollectionTask.getId());
+
+        // 输出完成率
+        printServiceCompleteRate(service, serverPlan);
+
+        // 完成另外两个任务
+        service.completeTask(serverPlan.getId(), serverExceptionTask.getId());
+        service.completeTask(serverPlan.getId(), serverTestTask.getId());
+
+        // 输出完成率
+        printServiceCompleteRate(service, serverPlan);
+
+        // 输出android计划完成率
+        printServiceCompleteRate(service, androidPlan);
+    }
+
+    public static void demonstrateInvalidInput() {
+        StudyPlanService service = new StudyPlanService();
+        StudyPlan androidPlan = service.createPlan("Android 入门");
         try {
-            service.createPlan("   ");
+            service.addTask( androidPlan.getId(), "   ");
         } catch (IllegalArgumentException e) {
             System.out.println("创建失败：" + e.getMessage());
         }
+        StudyTask task = service.addTask(androidPlan.getId(), "Kotlin 基础");
+        System.out.println("异常后继续创建成功：" + task.getTitle());
+    }
 
-// -------Lesson 5 完成率计算
+    public static void printServiceCompleteRate(StudyPlanService service, StudyPlan serverPlan) {
         double rate = service.calculateCompletionRate(serverPlan.getId());
         System.out.printf("%s学习计划完成率：%.2f%%%n",
                 serverPlan.getTitle(), rate);
